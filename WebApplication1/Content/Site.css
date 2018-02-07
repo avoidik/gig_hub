@@ -1,0 +1,137 @@
+﻿body {
+    padding-top: 90px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* override bootstrap */
+
+.navbar-inverse {
+    background-color: #E34E2E;
+    border-color: #E34E2E;
+}
+
+.navbar-inverse .navbar-nav > li > a,
+.navbar-inverse .navbar-brand {
+    color: #fff;
+}
+
+body {
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 17px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    font-size: 17px;
+    padding: 20px 15px;
+    border-radius: 9px;
+    -ms-border-radius: 9px;
+}
+
+.form-control:focus {
+    border-color: #E34E2E;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(227, 78, 46, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(227, 78, 46, 0.6);
+}
+
+.btn {
+    font-size: 17px;
+    padding: 7px 20px;
+    border-radius: 9px;
+    -ms-border-radius: 9px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    color: #fff;
+    background-color: #a03822;
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+.field-validation-error {
+    color: #a03822;
+    font-weight: bold;
+}
+
+/* site specific */
+
+.gigs > li {
+    position: relative;
+    margin-bottom: 30px;
+    list-style: none;
+}
+
+.gigs > li .details {
+    position: absolute;
+    top: 0;
+    left: 70px;
+}
+
+.gigs > li .date {
+    color: white;
+    background: red;
+    width: 60px;
+    text-align: center;
+    border-radius: 8px;
+    -ms-border-radius: 8px;
+}
+
+.gigs > li .date .month {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 2px 6px;
+}
+
+.gigs > li .date .day {
+    background: #f7f7f7;
+    color: #333;
+    font-size: 20px;
+    padding: 6px 12px;
+}
+
+.gigs > li .details .artist {
+    display: block;
+    font-weight: bold;
+}
+
+.gigs > li .details .genre {
+    font-size: 14px;
+}
+
+.voffset { margin-top: 2px; }
+.voffset-1 { margin-top: 5px; }
+.voffset-2 { margin-top: 10px; }
+.voffset-3 { margin-top: 20px; }
+.voffset-4 { margin-top: 40px; }
+.voffset-5 { margin-top: 80px; }
