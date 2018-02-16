@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
@@ -17,16 +18,43 @@ namespace WebApplication1.Controllers
 
         }
 
+        [HttpPost]
+        public ActionResult Search(GigsViewModel model)
+        {
+            return RedirectToAction("Index", "Home", new { query = model.SearchTerm });
+        }
+
         // GET: Gigs
         [Authorize]
         public ActionResult Create()
         {
             var viewModel = new GigFormViewModel
             {
-                Genres = _context.Genre.ToList()
+                Genres = _context.Genre.ToList(),
+                Heading = "Add a Gig"
             };
 
-            return View(viewModel);
+            return View("GigForm", viewModel);
+        }
+
+        [Authorize]
+        public ActionResult Edit(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            var gig = _context.Gig.Single(g => g.Id == id && g.ArtistId == userId);
+
+            var viewModel = new GigFormViewModel
+            {
+                Id = gig.Id,
+                Genres = _context.Genre.ToList(),
+                Date = gig.DateTime.ToString("d MMM yyyy"),
+                Time = gig.DateTime.ToString("HH:MM"),
+                Genre = gig.GenreId,
+                Venue = gig.Venue,
+                Heading = "Edit a Gig"
+            };
+
+            return View("GigForm", viewModel);
         }
 
         [Authorize]
@@ -37,21 +65,38 @@ namespace WebApplication1.Controllers
             if (!ModelState.IsValid)
             {
                 model.Genres = _context.Genre.ToList();
-                return View("Create", model);
+                return View("GigForm", model);
             }
 
-            var gig = new Gig
-            {
-                ArtistId = User.Identity.GetUserId(),
-                DateTime = model.GetDateTime(),
-                GenreId = model.Genre,
-                Venue = model.Venue
-            };
+            var gig = Gig.NewGig(model.GetDateTime(), User.Identity.GetUserId(), model.Genre, model.Venue);
 
             _context.Gig.Add(gig);
             _context.SaveChanges();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Mine", "Gigs");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Update(GigFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Genres = _context.Genre.ToList();
+                return View("GigForm", model);
+            }
+
+            var userId = User.Identity.GetUserId();
+            var gig = _context.Gig
+                .Include(g => g.Attendances.Select(a => a.Attendee))
+                .Single(g => g.Id == model.Id && g.ArtistId == userId);
+
+            gig.Update(model.GetDateTime(), model.Venue, model.Genre);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Mine", "Gigs");
         }
 
         [Authorize]
@@ -73,6 +118,17 @@ namespace WebApplication1.Controllers
             };
 
             return View("Gigs", viewModel);
+        }
+
+        [Authorize]
+        public ActionResult Mine()
+        {
+            var userId = User.Identity.GetUserId();
+            var gigs = _context.Gig
+                .Where(g => g.ArtistId == userId && g.DateTime > DateTime.Now)
+                .Include(g => g.Genre)
+                .ToList();
+            return View(gigs);
         }
     }
 }

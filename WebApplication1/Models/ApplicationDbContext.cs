@@ -9,6 +9,8 @@ namespace WebApplication1.Models
         public DbSet<Genre> Genre { get; set; }
         public DbSet<Attendance> Attendence { get; set; }
         public DbSet<Following> Following { get; set; }
+        public DbSet<Notification> Notification { get; set; }
+        public DbSet<UserNotification> UserNotification { get; set; }
 
         public ApplicationDbContext()
                 : base("DefaultConnection", throwIfV1Schema: false)
@@ -24,9 +26,8 @@ namespace WebApplication1.Models
         {
             modelBuilder.Entity<Attendance>()
                 .HasRequired(a => a.Gig)
-                .WithMany()
+                .WithMany(g => g.Attendances)
                 .WillCascadeOnDelete(false);
-
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Followers)
@@ -36,6 +37,11 @@ namespace WebApplication1.Models
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Followees)
                 .WithRequired(f => f.Follower)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<UserNotification>()
+                .HasRequired(n => n.User)
+                .WithMany(u => u.UserNotification)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);

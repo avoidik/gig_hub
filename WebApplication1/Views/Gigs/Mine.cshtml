@@ -1,0 +1,121 @@
+﻿@model IEnumerable<WebApplication1.Models.Gig>
+@{
+    ViewBag.Title = "Mine";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>My Upcoming Gigs</h2>
+<ul class="gigs voffset-3">
+    @foreach (var gig in Model)
+    {
+        <li>
+            <div class="date">
+                <div class="month">
+                    @gig.DateTime.ToString("MMM")
+                </div>
+                <div class="day">
+                    @gig.DateTime.ToString("d ")
+                </div>
+            </div>
+            <div class="details">
+                <span class="artist">
+                    @gig.Venue
+                    @if (gig.IsCancelled)
+                    {
+                        <span class="label label-warning">Cancelled!</span>
+                    }
+                </span>
+                <span class="genre">
+                    @gig.Genre.Name
+                </span>
+                <div class="actions">
+                    <a href="@Url.Action("Edit", "Gigs", new { id = gig.Id })">Edit</a> |
+                    @if (gig.IsCancelled)
+                    {
+                        <a href="#" class="js-uncancel-gig" data-gig-id="@gig.Id">Uncancel</a>
+                    }
+                    else
+                    {
+                        <a href="#" class="js-cancel-gig" data-gig-id="@gig.Id">Cancel</a>
+                    }                    
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-cancel-gig").click(function (e) {
+                var link = $(e.target);
+
+                var dialog = bootbox.dialog({
+                    title: '<strong>Confirmation<strong>',
+                    message: "<p>Really delete this Gig?</p>",
+                    buttons: {
+                        cancel: {
+                            label: "No",
+                            className: 'btn-default',
+                            callback: function () {
+                                bootbox.hideAll();
+                            }
+                        },
+                        ok: {
+                            label: "Yes!",
+                            className: 'btn-danger',
+                            callback: function () {
+                                $.ajax({
+                                    url: "/api/gigs/" + link.attr("data-gig-id"),
+                                    method: "DELETE"
+                                })
+                                .done(function () {
+                                    alert("Cancelled!");
+                                })
+                                .fail(function () {
+                                    alert("Something failed!");
+                                });
+                            }
+                        }
+                    }
+                });
+
+            });
+
+            $(".js-uncancel-gig").click(function (e) {
+                var link = $(e.target);
+
+                var dialog = bootbox.dialog({
+                    title: '<strong>Confirmation<strong>',
+                    message: "<p>Restore this Gig?</p>",
+                    buttons: {
+                        cancel: {
+                            label: "No",
+                            className: 'btn-default',
+                            callback: function () {
+                                bootbox.hideAll();
+                            }
+                        },
+                        ok: {
+                            label: "Yes!",
+                            className: 'btn-success',
+                            callback: function () {
+                                var button = $(e.target);
+                                $.post(
+                                    "/api/gigs/uncancel", { gigId: button.attr("data-gig-id") }
+                                )
+                                .done(function () {
+                                    alert("Restored!");
+                                })
+                                .fail(function () {
+                                    alert("Something failed!");
+                                });
+                            }
+                        }
+                    }
+                });
+
+            });
+        });
+    </script>
+}
